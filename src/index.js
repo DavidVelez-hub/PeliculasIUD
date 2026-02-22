@@ -1,23 +1,47 @@
+const express = require('express');
+const connectDB = require('./config/database');
+import genereRoutes from './routes/generes.js';
+require('dotenv').config();
 
-// server-express.js
-const express = require('express')
-const mongoose = require('mongoose')
-require('dotenv').config()
-const app = express() // initialize app
-const port = 9000
+const app = express();
 
-// GET callback function returns a response message
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
+connectDB();
+
+app.use('/generes', genreRoutes);
+
 app.get('/', (req, res) => {
-res.send('Pepe el pollo')
-})
+  res.json({
+    message: '🎬 API Películas IUD - EA1',
+    version: '1.0.0',
+    endpoints: {},
+    status: 'OK'
+  });
+});
 
-//mongodb conection
-mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoAtlas conected'))
-    .catch(err => console.error(err))
+// Manejo de 404
+app.use((req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    message: 'Ruta no encontrada' 
+  });
+});
 
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Error interno del servidor',
+    error: err.message
+  });
+});
 
-app.listen(port, () => {
-console.log(`Server listening at http://localhost:${port}`)
-})
+const PORT = process.env.PORT || 9000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});
