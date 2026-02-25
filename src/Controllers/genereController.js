@@ -1,51 +1,60 @@
 
 import express from "express";
-class directorController {
-  constructor() {}
+import GenereModel from '../models/Genere.js';
 
-  async getAllDirectors(req, res) {
+class genereController {
+  constructor(){
+    
+  }
+
+
+
+ async createGenere(req, res) {
+   try {
+
+        const data = await GenereModel.create(req.body);
+        res.status(201).json(data);
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
+    }  
+  async getAllGeneres(req, res) {
     try {
-        res.status(201).json({status: 'get-OK'}); 
+        const data = await GenereModel.getAll();
+        res.status(201).json({data});
     } catch (e) {
         res.status(500).send(e.message);
     }
   }
 
-  async create(req, res) {
+  async getOneGenere(req, res) {  
     try {
-      res.status(200).json({ status: 'Director creado correctamente' });
+      const { id } = req.params;
+      const data = await GenereModel.getOneGenere(id);
+        res.status(201).json({data});
     } catch (e) {
-      res.status(500).json({ message: e.message });
-    }
-    
-  }
-
-  async update(req, res) {
-    try {
-      res.status(200).json({ status: 'Director actualizado correctamente' });
-    } catch (e) {
-      res.status(500).json({ message: e.message });
+        res.status(500).send(e.message);
     }
   }
 
-  async delete(req, res) {
-    try {
-      res.status(200).json({ status: 'Director eliminado correctamente' });
+  async updateGenere(req, res) {
+     try {
+      const { id } = req.params;
+      const data = await GenereModel.updateGenere(id, req.body);  
+        res.status(201).json({data});
     } catch (e) {
-      res.status(500).json({ message: e.message });
+        res.status(500).send(e.message);
     }
   }
 
- 
-
-  async getOne(req, res) {
-    try {
-      res.status(200).json({ status: 'Director obtenido correctamente' });
+  async deleteGenere(req, res) {
+      try {
+        const { id } = req.params;
+        const data = await GenereModel.deleteGenere(id);
+        res.status(206).json({data});
     } catch (e) {
-      res.status(500).json({ message: e.message });
+        res.status(500).send(e.message);
     }
   }
-
 }
-
-export default new directorController();
+export default new genereController();
